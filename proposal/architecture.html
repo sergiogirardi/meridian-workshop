@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Meridian Components — Architecture Overview</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; padding: 40px; }
+h1 { font-size: 28px; font-weight: 700; color: #f8fafc; margin-bottom: 6px; }
+.subtitle { color: #64748b; font-size: 14px; margin-bottom: 36px; }
+.layer { margin-bottom: 28px; }
+.layer-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #38bdf8; margin-bottom: 12px; padding-left: 4px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.box {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 16px 18px;
+  min-width: 160px;
+}
+.box.accent { border-color: #38bdf8; background: #0c1f35; }
+.box.green  { border-color: #10b981; background: #0a1f18; }
+.box.amber  { border-color: #f59e0b; background: #1a1400; }
+.box.purple { border-color: #a78bfa; background: #150d2a; }
+.box.red    { border-color: #f87171; background: #1a0a0a; }
+.box-title { font-size: 13px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; }
+.box-title.blue   { color: #38bdf8; }
+.box-title.green  { color: #10b981; }
+.box-title.amber  { color: #f59e0b; }
+.box-title.purple { color: #a78bfa; }
+.box-title.red    { color: #f87171; }
+.items { list-style: none; }
+.items li { font-size: 12px; color: #94a3b8; padding: 2px 0; }
+.items li::before { content: '·'; color: #475569; margin-right: 6px; }
+.arrow-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 4px 0; color: #475569; font-size: 12px; }
+.arrow-row svg { flex-shrink: 0; }
+.flow-section { margin-top: 28px; }
+.flow-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #38bdf8; margin-bottom: 12px; }
+.flow-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.flow-box { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 6px 12px; font-size: 12px; color: #cbd5e1; }
+.flow-arrow { color: #38bdf8; font-size: 16px; font-weight: 700; }
+.issues-section { margin-top: 28px; }
+.issue { display: flex; gap: 10px; padding: 10px 14px; background: #1a0a0a; border: 1px solid #7f1d1d; border-radius: 8px; margin-bottom: 8px; }
+.issue-tag { font-size: 10px; font-weight: 700; background: #7f1d1d; color: #fca5a5; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; white-space: nowrap; align-self: flex-start; }
+.issue-text { font-size: 12px; color: #fca5a5; line-height: 1.5; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.endpoint { font-size: 11px; color: #64748b; margin-top: 4px; }
+.tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; margin-left: 4px; }
+.tag.get { background: #0c2a1a; color: #10b981; border: 1px solid #10b981; }
+.tag.post { background: #0c1f35; color: #38bdf8; border: 1px solid #38bdf8; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 28px; padding-top: 20px; border-top: 1px solid #1e293b; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<h1>Meridian Components — Inventory Dashboard</h1>
+<p class="subtitle">Current-State Architecture Overview · Verified against codebase · April 2026</p>
+
+<!-- FRONTEND LAYER -->
+<div class="layer">
+  <div class="layer-label">Frontend — Vue 3 + Vite (port 3000)</div>
+  <div class="row">
+    <div class="box accent">
+      <div class="box-title blue">Views (client/src/views/)</div>
+      <ul class="items">
+        <li>Dashboard.vue — KPIs, backlog table</li>
+        <li>Inventory.vue — stock levels, search</li>
+        <li>Orders.vue — order tracking</li>
+        <li>Demand.vue — demand forecasts</li>
+        <li>Spending.vue — revenue &amp; costs</li>
+        <li>Reports.vue — quarterly/monthly ⚠️</li>
+        <li>Backlog.vue — shortage tracking</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">Components</div>
+      <ul class="items">
+        <li>FilterBar.vue — 4 filter dropdowns</li>
+        <li>InventoryDetailModal.vue</li>
+        <li>OrderDetailModal.vue</li>
+        <li>BacklogDetailModal.vue</li>
+        <li>ProfileMenu.vue</li>
+        <li>LanguageSwitcher.vue (EN/JA)</li>
+      </ul>
+    </div>
+    <div class="box green">
+      <div class="box-title green">Composables</div>
+      <ul class="items">
+        <li>useFilters.js — singleton state</li>
+        <li>&nbsp;&nbsp;selectedPeriod → month</li>
+        <li>&nbsp;&nbsp;selectedLocation → warehouse</li>
+        <li>&nbsp;&nbsp;selectedCategory → category</li>
+        <li>&nbsp;&nbsp;selectedStatus → status</li>
+        <li>useI18n.js — EN/JA translations</li>
+        <li>useAuth.js — mock user/tasks</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">API Client (api.js)</div>
+      <ul class="items">
+        <li>Base: http://localhost:8001/api</li>
+        <li>axios + URLSearchParams</li>
+        <li>'all' values skipped in params</li>
+        <li>21 API methods</li>
+        <li>⚠️ Reports calls NOT in api.js</li>
+        <li>&nbsp;&nbsp;(inline axios in Reports.vue)</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">Locales</div>
+      <ul class="items">
+        <li>en.js — English strings</li>
+        <li>ja.js — Japanese strings</li>
+        <li>⚠️ Partial coverage</li>
+        <li>&nbsp;&nbsp;Reports page: English-only</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER FLOW -->
+<div class="flow-section">
+  <div class="flow-title">Filter Flow (end-to-end)</div>
+  <div class="flow-row">
+    <div class="flow-box">User selects filter</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">FilterBar.vue (v-model)</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">useFilters.js (singleton refs)</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">View watcher fires</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">getCurrentFilters()</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">axios GET + query params</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">FastAPI filters in-memory</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">Vue re-renders</div>
+  </div>
+  <div style="font-size:12px; color:#475569; margin-top:6px;">
+    Note: <code style="color:#f59e0b">selectedLocation</code> → maps to <code style="color:#f59e0b">warehouse</code> param &nbsp;|&nbsp;
+    <code style="color:#f59e0b">selectedPeriod</code> → maps to <code style="color:#f59e0b">month</code> param (supports "Q1-2025" quarter format) &nbsp;|&nbsp;
+    Backlog filtered <strong>client-side</strong>, not via API
+  </div>
+</div>
+
+<!-- BACKEND LAYER -->
+<div class="layer" style="margin-top:28px;">
+  <div class="layer-label">Backend — Python FastAPI (port 8001)</div>
+  <div class="grid-2">
+    <div class="box purple">
+      <div class="box-title purple">API Routes (main.py)</div>
+      <ul class="items">
+        <li><span class="tag get">GET</span> /api/inventory?warehouse&amp;category</li>
+        <li><span class="tag get">GET</span> /api/inventory/{id}</li>
+        <li><span class="tag get">GET</span> /api/orders?warehouse&amp;category&amp;status&amp;month</li>
+        <li><span class="tag get">GET</span> /api/orders/{id}</li>
+        <li><span class="tag get">GET</span> /api/demand (no filters)</li>
+        <li><span class="tag get">GET</span> /api/backlog (no filters)</li>
+        <li><span class="tag get">GET</span> /api/dashboard/summary (all 4 filters)</li>
+        <li><span class="tag get">GET</span> /api/spending/{summary|monthly|categories|transactions}</li>
+        <li><span class="tag get">GET</span> /api/reports/quarterly</li>
+        <li><span class="tag get">GET</span> /api/reports/monthly-trends</li>
+        <li><span class="tag post">POST</span> /api/purchase-orders</li>
+        <li><span class="tag get">GET</span> /api/purchase-orders/{id}</li>
+        <li><span class="tag get">GET</span> /api/tasks &amp; POST/PATCH/DELETE</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">Pydantic Models</div>
+      <ul class="items">
+        <li>InventoryItem — id, sku, name, category, warehouse, qty_on_hand, reorder_point, unit_cost, location</li>
+        <li>Order — id, order_number, customer, items[], status, dates, total_value, warehouse?, category?</li>
+        <li>DemandForecast — item_sku, item_name, current_demand, forecasted_demand, trend, period</li>
+        <li>BacklogItem — item_sku, qty_needed, qty_available, days_delayed, priority, has_purchase_order</li>
+        <li>PurchaseOrder — backlog_item_id, supplier_name, quantity, unit_cost, expected_delivery_date</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- DATA LAYER -->
+<div class="layer">
+  <div class="layer-label">Data Layer — JSON files (server/data/) · In-memory, no persistence</div>
+  <div class="row">
+    <div class="box amber">
+      <div class="box-title amber">inventory.json</div>
+      <ul class="items"><li>49+ items</li><li>All 3 warehouses</li><li>5 categories</li></ul>
+    </div>
+    <div class="box amber">
+      <div class="box-title amber">orders.json</div>
+      <ul class="items"><li>30+ orders</li><li>4 statuses</li><li>warehouse/category optional ⚠️</li></ul>
+    </div>
+    <div class="box amber">
+      <div class="box-title amber">demand_forecasts.json</div>
+      <ul class="items"><li>13+ forecasts</li><li>period: "Next 30 days" (text, not filterable)</li></ul>
+    </div>
+    <div class="box amber">
+      <div class="box-title amber">backlog_items.json</div>
+      <ul class="items"><li>5+ items</li><li>has_purchase_order computed at runtime</li></ul>
+    </div>
+    <div class="box amber">
+      <div class="box-title amber">spending.json</div>
+      <ul class="items"><li>summary + monthly + categories</li></ul>
+    </div>
+    <div class="box amber">
+      <div class="box-title amber">purchase_orders.json</div>
+      <ul class="items"><li>⚠️ Empty []</li><li>Feature incomplete</li></ul>
+    </div>
+    <div class="box amber">
+      <div class="box-title amber">transactions.json</div>
+      <ul class="items"><li>Recent transactions</li></ul>
+    </div>
+  </div>
+</div>
+
+<!-- KNOWN ISSUES -->
+<div class="issues-section">
+  <div class="flow-title">Known Issues &amp; Findings (R1 Audit)</div>
+  <div class="issue">
+    <span class="issue-tag">R1-1</span>
+    <span class="issue-text">Reports.vue makes API calls with raw axios inline, not via api.js. Inconsistent with every other view — breaks the established pattern and makes testing harder.</span>
+  </div>
+  <div class="issue">
+    <span class="issue-tag">R1-2</span>
+    <span class="issue-text">Reports page has no filter support. All other views respond to the global FilterBar; Reports ignores it entirely. No warehouse/period filtering on quarterly or monthly data.</span>
+  </div>
+  <div class="issue">
+    <span class="issue-tag">R1-3</span>
+    <span class="issue-text">Reports.vue has no i18n — all strings are hardcoded English. Tokyo warehouse staff see no translations on this page.</span>
+  </div>
+  <div class="issue">
+    <span class="issue-tag">R1-4</span>
+    <span class="issue-text">Custom number formatting in Reports.vue (formatNumber, formatMonth) duplicates logic that exists in currency.js and other views. Fragile and untested.</span>
+  </div>
+  <div class="issue">
+    <span class="issue-tag">R1-5</span>
+    <span class="issue-text">Dashboard summary mixes filtered and unfiltered counts: low_stock_items is filtered by warehouse/category, but total_backlog_items counts all backlog regardless of filter. Inconsistent KPI behavior.</span>
+  </div>
+  <div class="issue">
+    <span class="issue-tag">R1-6</span>
+    <span class="issue-text">Backlog on Dashboard shows ALL items regardless of filter bar selections. Backlog.vue applies client-side filtering correctly; Dashboard.vue does not.</span>
+  </div>
+  <div class="issue">
+    <span class="issue-tag">R1-7</span>
+    <span class="issue-text">Order.warehouse and Order.category are Optional in the Pydantic model — used for filtering but not guaranteed present in orders.json. Filter silently returns wrong results for orders missing these fields.</span>
+  </div>
+  <div class="issue">
+    <span class="issue-tag">R1-8</span>
+    <span class="issue-text">purchase_orders.json is empty and the feature is incomplete — PO action buttons visible on Dashboard but the backend data layer is not populated.</span>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <span style="font-size:11px; color:#475569; font-weight:700; text-transform:uppercase; letter-spacing:0.1em;">Legend:</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#38bdf8;"></span> Frontend</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#10b981;"></span> Composables / State</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#a78bfa;"></span> Backend / API</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span> Data layer</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#f87171;"></span> Known issue</span>
+  <span style="font-size:11px; color:#475569; margin-left:8px;">⚠️ = defect or inconsistency found during audit</span>
+</div>
+
+</body>
+</html>

@@ -188,6 +188,63 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: '補充推奨',
+    description: '現在の在庫レベルと需要予測に基づく推奨発注',
+    budgetLabel: '予算上限（$）',
+    budgetPlaceholder: '予算上限を入力...',
+    getRecommendations: '推奨を取得',
+    noBudget: '予算上限を入力して「推奨を取得」をクリックしてください',
+    noItems: '現在、再注文点を下回っている品目はありません',
+    table: {
+      rank: '#',
+      item: '品目',
+      sku: 'SKU',
+      warehouse: '倉庫',
+      currentStock: '現在在庫',
+      reorderPoint: '再注文点',
+      recommendedQty: '推奨数量',
+      estimatedCost: '推定コスト',
+      demandTrend: '需要トレンド'
+    },
+    stats: {
+      itemsRecommended: '推奨品目数',
+      totalCost: '推定合計コスト',
+      budgetUsed: '使用予算',
+      budgetRemaining: '残余予算'
+    }
+  },
+
+  // Reports
+  reports: {
+    title: 'パフォーマンスレポート',
+    description: '四半期の業績指標と月次トレンドを表示',
+    quarterly: {
+      title: '四半期パフォーマンス',
+      quarter: '四半期',
+      totalOrders: '総注文数',
+      totalRevenue: '総収益',
+      avgOrderValue: '平均注文額',
+      fulfillmentRate: '履行率'
+    },
+    monthlyTrend: { title: '月次収益トレンド' },
+    monthOverMonth: {
+      title: '前月比分析',
+      month: '月',
+      orders: '注文',
+      revenue: '収益',
+      change: '変化',
+      growthRate: '成長率'
+    },
+    stats: {
+      totalRevenue: '総収益（年初来）',
+      avgMonthly: '平均月次収益',
+      totalOrders: '総注文数（年初来）',
+      bestQuarter: '最高パフォーマンス四半期'
+    }
+  },
+
   // Filters
   filters: {
     timePeriod: '期間',
